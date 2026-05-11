@@ -1,0 +1,11 @@
+.venv_ecg/
+__pycache__/
+*.pyc
+data/raw/
+data/processed/
+models/
+*.pt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store

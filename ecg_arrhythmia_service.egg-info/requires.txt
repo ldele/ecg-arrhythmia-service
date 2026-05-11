@@ -1,0 +1,9 @@
+numpy>=1.26
+scipy>=1.11
+wfdb>=4.1
+torch>=2.2
+
+[dev]
+pytest>=8.0
+ruff>=0.4
+mypy>=1.10
