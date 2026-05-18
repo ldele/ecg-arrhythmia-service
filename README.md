@@ -28,9 +28,7 @@ curl -X POST https://ecg-api-lvij6dnkaa-ew.a.run.app/predict
 
 ## Architecture
 
-```
 ![Architecture](docs/architecture.png)
-```
 
 ## Pipeline
 
