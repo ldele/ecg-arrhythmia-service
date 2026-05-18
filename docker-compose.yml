@@ -1,0 +1,10 @@
+services:
+  ecg-api:
+    build: .
+    image: ecg-arrhythmia-service:local
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - MODEL_PATH=/app/models/model.pt
+    restart: unless-stopped
