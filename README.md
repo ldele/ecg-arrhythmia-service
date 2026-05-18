@@ -29,29 +29,7 @@ curl -X POST https://ecg-api-lvij6dnkaa-ew.a.run.app/predict
 ## Architecture
 
 ```
-┌──────────────────┐         ┌──────────────────────────┐
-│ Client / Demo    │ HTTPS   │  Cloud Run               │
-│ (curl, Swagger,  ├────────►│  ┌────────────────────┐  │
-│  Streamlit)      │         │  │ FastAPI inference  │  │
-└──────────────────┘         │  │  /predict /health  │  │
-│  │  JSON logs → stdout│  │
-│  └─────────┬──────────┘  │
-│            │ load at      │
-│            ▼ startup      │
-│  Model in memory          │
-└────┬────────────┬─────────┘
-│            │
-┌─────▼────┐  ┌────▼───────────┐
-│   GCS    │  │ Artifact       │
-│ model.pt │  │ Registry       │
-└──────────┘  │ container image│
-└────────┬───────┘
-▲
-┌────────┴───────┐
-│ GitHub Actions │
-│ build · test · │
-│ push · deploy  │
-└────────────────┘
+![Architecture](docs/architecture.png)
 ```
 
 ## Pipeline
