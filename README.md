@@ -11,24 +11,34 @@ is the system around it.
 
 ## Live demo
 
-- Service: <https://ecg-api-lvij6dnkaa-ew.a.run.app>
+- **Interactive web demo:** <https://ecg-demo-707486058219.europe-west1.run.app>
+  Pick a MIT-BIH sample, hit "Classify beats", see per-beat predictions
+  overlaid on the signal.
+- API service: <https://ecg-api-lvij6dnkaa-ew.a.run.app>
 - API docs (Swagger UI): <https://ecg-api-lvij6dnkaa-ew.a.run.app/docs>
 - Health: <https://ecg-api-lvij6dnkaa-ew.a.run.app/health>
 
-> Cold-start latency is ~10–20s when the service has scaled to zero.
-> Subsequent requests respond in tens of milliseconds.
+> Both services scale to zero when idle. The first interaction may take
+> 20–30 seconds while both containers cold-start; subsequent requests
+> respond in tens of milliseconds.
 
-Example request:
+Example API request:
 
 ```bash
-curl -X POST https://ecg-api-lvij6dnkaa-ew.a.run.app/predict 
--H "Content-Type: application/json" 
--d '{"signal": [/* 650+ float samples */], "fs": 360}'
+curl -X POST https://ecg-api-lvij6dnkaa-ew.a.run.app/predict \
+  -H "Content-Type: application/json" \
+  -d '{"signal": [/* 650+ float samples */], "fs": 360}'
 ```
 
 ## Architecture
 
 ![Architecture](docs/architecture.png)
+
+The system is two Cloud Run services in `europe-west1`: a FastAPI
+inference service (`ecg-api`) that loads its model from GCS at startup,
+and a Streamlit demo client (`ecg-demo`) that calls the API. Container
+images live in Artifact Registry; the model artifact lives in GCS,
+versioned under `models/v1.0.0/model.pt`.
 
 ## Pipeline
 
