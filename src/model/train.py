@@ -104,8 +104,8 @@ def train(
     test_loader = DataLoader(test_dataset, batch_size=config.batch_size)
 
     model = ECGNet(n_classes=N_CLASSES).to(device)
-    weights = _compute_class_weights(train_dataset.y).to(device)
-    criterion = nn.CrossEntropyLoss(weight=weights)
+    # weights = _compute_class_weights(train_dataset.y).to(device)
+    criterion = nn.CrossEntropyLoss() # criterion = nn.CrossEntropyLoss(weight=weights)
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config.lr, weight_decay=config.weight_decay
     )
