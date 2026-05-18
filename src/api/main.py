@@ -49,8 +49,8 @@ app = FastAPI(
 )
 
 
-@app.get("/healthz", response_model=HealthResponse)
-def healthz() -> HealthResponse:
+@app.get("/health", response_model=HealthResponse)
+def health() -> HealthResponse:
     return HealthResponse(status="ok", model_loaded="model" in _state)
 
 

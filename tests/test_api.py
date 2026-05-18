@@ -25,8 +25,8 @@ def client() -> TestClient:
         yield c
 
 
-def test_healthz(client: TestClient) -> None:
-    response = client.get("/healthz")
+def test_health(client: TestClient) -> None:
+    response = client.get("/health")
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
