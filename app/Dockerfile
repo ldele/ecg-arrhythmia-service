@@ -15,6 +15,7 @@ COPY app/requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY app/streamlit_demo.py .
+COPY app/ECG_BACKGROUND.md .
 COPY app/demo_samples/ ./demo_samples/
 
 USER appuser
