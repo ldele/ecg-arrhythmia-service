@@ -43,7 +43,8 @@ def bandpass_filter(
         output="sos",
     )
     # filtfilt along axis 0 (time)
-    return sosfiltfilt(sos, signal, axis=0).astype(signal.dtype)
+    filtered = sosfiltfilt(sos, signal, axis=0)
+    return np.asarray(filtered, dtype=signal.dtype)
 
 
 def normalize_window(window: np.ndarray, eps: float = 1e-8) -> np.ndarray:
@@ -64,4 +65,4 @@ def normalize_window(window: np.ndarray, eps: float = 1e-8) -> np.ndarray:
     arr = np.asarray(window, dtype=np.float32)
     mean = arr.mean(axis=-1, keepdims=True)
     std = arr.std(axis=-1, keepdims=True)
-    return (arr - mean) / (std + eps)
+    return np.asarray((arr - mean) / (std + eps), dtype=np.float32)

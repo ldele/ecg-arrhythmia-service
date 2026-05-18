@@ -12,6 +12,7 @@ import numpy as np
 import torch
 from fastapi import FastAPI, HTTPException
 
+from src.utils.gcs import download_gcs_blob, is_gcs_uri
 from src.api.logging_config import configure_logging
 from src.api.schemas import (
     BeatPredictionOut,
@@ -29,12 +30,18 @@ _state: dict[str, object] = {}
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    """Load the model once at startup."""
+    """Load the model once at startup. Supports gs:// URIs and local paths."""
     configure_logging()
-    model_path = Path(os.environ.get("MODEL_PATH", "models/model.pt"))
-    logger.info("Loading model", extra={"model_path": str(model_path)})
-    device = torch.device("cpu")  # Cloud Run = CPU only
-    model = load_model(model_path, device=device)
+    model_uri = os.environ.get("MODEL_PATH", "models/model.pt")
+    logger.info("Loading model", extra={"model_uri": model_uri})
+
+    if is_gcs_uri(model_uri):
+        local_path = download_gcs_blob(model_uri)
+    else:
+        local_path = Path(model_uri)
+
+    device = torch.device("cpu")
+    model = load_model(local_path, device=device)
     _state["model"] = model
     _state["device"] = device
     logger.info("Model loaded")

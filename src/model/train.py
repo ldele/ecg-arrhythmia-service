@@ -41,7 +41,10 @@ def _compute_class_weights(y: np.ndarray) -> torch.Tensor:
 
 def _split_train_val(
     dataset: EcgBeatDataset, val_fraction: float, seed: int
-) -> tuple[torch.utils.data.Subset, torch.utils.data.Subset]:
+) -> tuple[
+    torch.utils.data.Subset[tuple[torch.Tensor, torch.Tensor]],
+    torch.utils.data.Subset[tuple[torch.Tensor, torch.Tensor]],
+]:
     n = len(dataset)
     n_val = int(n * val_fraction)
     g = torch.Generator().manual_seed(seed)
@@ -55,7 +58,7 @@ def _split_train_val(
 
 def _run_epoch(
     model: nn.Module,
-    loader: DataLoader,
+    loader: DataLoader[tuple[torch.Tensor, torch.Tensor]],
     criterion: nn.Module,
     optimizer: torch.optim.Optimizer | None,
     device: torch.device,

@@ -28,6 +28,19 @@ target-version = "py312"
 python_version = "3.12"
 strict = true
 
+[[tool.mypy.overrides]]
+module = [
+    "wfdb",
+    "wfdb.*",
+    "scipy",
+    "scipy.*",
+    "sklearn",
+    "sklearn.*",
+    "google.cloud",
+    "google.cloud.*",
+]
+ignore_missing_imports = true
+
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"

@@ -68,7 +68,7 @@ class ConvBlock(nn.Module):
         self.pool = nn.MaxPool1d(kernel_size=2)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.pool(self.relu(self.bn(self.conv(x))))
+            return self.pool(self.relu(self.bn(self.conv(x))))  # type: ignore[no-any-return]
 
 
 class ECGNet(nn.Module):
@@ -88,10 +88,10 @@ class ECGNet(nn.Module):
         self.fc = nn.Linear(64, n_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x: (batch, 1, window_length)
-        x = self.block1(x)
-        x = self.block2(x)
-        x = self.block3(x)
-        x = self.global_pool(x).squeeze(-1)  # (batch, 64)
-        x = self.dropout(x)
-        return self.fc(x)  # (batch, n_classes)
+            # x: (batch, 1, window_length)
+            x = self.block1(x)
+            x = self.block2(x)
+            x = self.block3(x)
+            x = self.global_pool(x).squeeze(-1)  # (batch, 64)
+            x = self.dropout(x)
+            return self.fc(x)  # type: ignore[no-any-return]

@@ -14,7 +14,7 @@ import torch
 from scipy.signal import find_peaks
 
 from src.data.preprocess import bandpass_filter, normalize_window
-from src.data.segment import SAMPLES_AFTER, SAMPLES_BEFORE, segment_beats
+from src.data.segment import segment_beats
 from src.model.architecture import ECGNet
 from src.model.dataset import N_CLASSES
 
@@ -42,7 +42,7 @@ def detect_r_peaks(filtered_signal: np.ndarray, fs: int) -> np.ndarray:
     min_distance = int(PEAK_MIN_DISTANCE_S * fs)
     threshold = PEAK_MIN_HEIGHT_SD * float(filtered_signal.std())
     peaks, _ = find_peaks(filtered_signal, distance=min_distance, height=threshold)
-    return peaks.astype(np.int64)
+    return np.asarray(peaks, dtype=np.int64)
 
 
 def load_model(model_path: Path, device: torch.device | None = None) -> ECGNet:
