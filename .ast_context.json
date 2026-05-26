@@ -1,0 +1,774 @@
+{
+  "app\\streamlit_demo": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "list_samples": {
+        "line": 25,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "call_predict": {
+        "line": 31,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "plot_signal_with_beats": {
+        "line": 41,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "main": {
+        "line": 67,
+        "doc": null,
+        "calls": [
+          "?:list_samples",
+          "?:call_predict",
+          "?:plot_signal_with_beats"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "scripts\\api_smoke_test": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "main": {
+        "line": 11,
+        "doc": null,
+        "calls": [
+          "src\\data\\load.load_record"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "scripts\\build_dataset": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "_report": {
+        "line": 17,
+        "doc": null,
+        "calls": [],
+        "called_by": [
+          "scripts\\build_dataset.main",
+          "scripts\\build_dataset.main"
+        ]
+      },
+      "main": {
+        "line": 27,
+        "doc": null,
+        "calls": [
+          "src\\data\\build_dataset.build_dataset",
+          "scripts\\build_dataset._report",
+          "src\\data\\build_dataset.build_dataset",
+          "scripts\\build_dataset._report"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "scripts\\build_demo_samples": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "main": {
+        "line": 20,
+        "doc": null,
+        "calls": [
+          "src\\data\\load.load_record"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "scripts\\inspect_labels": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "main": {
+        "line": 21,
+        "doc": null,
+        "calls": [
+          "src\\data\\load.load_record",
+          "src\\data\\labels.map_to_aami"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "scripts\\predict_demo": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "main": {
+        "line": 11,
+        "doc": null,
+        "calls": [
+          "src\\data\\load.load_record",
+          "src\\model\\predict.load_model",
+          "src\\model\\predict.predict_signal"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "scripts\\train": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "main": {
+        "line": 10,
+        "doc": null,
+        "calls": [
+          "src\\model\\train.train"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "src\\api\\logging_config": {
+    "imports": [],
+    "classes": {
+      "JsonFormatter": {
+        "line": 10,
+        "doc": null,
+        "methods": [
+          "JsonFormatter.format"
+        ]
+      }
+    },
+    "functions": {
+      "JsonFormatter.format": {
+        "line": 11,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "configure_logging": {
+        "line": 32,
+        "doc": null,
+        "calls": [],
+        "called_by": [
+          "src\\api\\main.lifespan"
+        ]
+      }
+    }
+  },
+  "src\\api\\main": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "lifespan": {
+        "line": 32,
+        "doc": "Load the model once at startup. Supports gs:// URIs and local paths.",
+        "calls": [
+          "src\\api\\logging_config.configure_logging",
+          "src\\utils\\gcs.is_gcs_uri",
+          "src\\utils\\gcs.download_gcs_blob",
+          "src\\model\\predict.load_model"
+        ],
+        "called_by": []
+      },
+      "health": {
+        "line": 60,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "predict": {
+        "line": 65,
+        "doc": null,
+        "calls": [
+          "src\\model\\predict.predict_signal"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "src\\api\\schemas": {
+    "imports": [],
+    "classes": {
+      "PredictRequest": {
+        "line": 7,
+        "doc": "One single-channel ECG signal to classify.",
+        "methods": []
+      },
+      "BeatPredictionOut": {
+        "line": 23,
+        "doc": null,
+        "methods": []
+      },
+      "PredictResponse": {
+        "line": 29,
+        "doc": null,
+        "methods": []
+      },
+      "HealthResponse": {
+        "line": 34,
+        "doc": null,
+        "methods": []
+      }
+    },
+    "functions": {}
+  },
+  "src\\data\\build_dataset": {
+    "imports": [],
+    "classes": {
+      "Dataset": {
+        "line": 40,
+        "doc": null,
+        "methods": []
+      }
+    },
+    "functions": {
+      "build_dataset": {
+        "line": 46,
+        "doc": "Build a Dataset from a list of MIT-BIH records.",
+        "calls": [
+          "src\\data\\load.load_record",
+          "src\\data\\preprocess.bandpass_filter",
+          "src\\data\\segment.segment_beats",
+          "src\\data\\preprocess.normalize_window",
+          "src\\data\\labels.map_to_aami"
+        ],
+        "called_by": [
+          "scripts\\build_dataset.main",
+          "scripts\\build_dataset.main"
+        ]
+      }
+    }
+  },
+  "src\\data\\labels": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "map_to_aami": {
+        "line": 37,
+        "doc": "Map a MIT-BIH beat symbol to its AAMI superclass.",
+        "calls": [],
+        "called_by": [
+          "scripts\\inspect_labels.main",
+          "src\\data\\build_dataset.build_dataset"
+        ]
+      }
+    }
+  },
+  "src\\data\\load": {
+    "imports": [],
+    "classes": {
+      "EcgRecord": {
+        "line": 12,
+        "doc": "A single MIT-BIH record: signal + beat annotations.",
+        "methods": []
+      }
+    },
+    "functions": {
+      "load_record": {
+        "line": 22,
+        "doc": "Load one MIT-BIH record and its beat annotations.",
+        "calls": [],
+        "called_by": [
+          "scripts\\api_smoke_test.main",
+          "scripts\\build_demo_samples.main",
+          "scripts\\inspect_labels.main",
+          "scripts\\predict_demo.main",
+          "src\\data\\build_dataset.build_dataset"
+        ]
+      },
+      "download_mitbih": {
+        "line": 51,
+        "doc": "Download the MIT-BIH Arrhythmia Database to data_dir.",
+        "calls": [],
+        "called_by": []
+      }
+    }
+  },
+  "src\\data\\preprocess": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "bandpass_filter": {
+        "line": 13,
+        "doc": "Zero-phase Butterworth bandpass filter.",
+        "calls": [],
+        "called_by": [
+          "src\\data\\build_dataset.build_dataset",
+          "src\\model\\predict.predict_signal",
+          "tests\\test_preprocess.test_bandpass_removes_dc_offset",
+          "tests\\test_preprocess.test_bandpass_attenuates_high_freq",
+          "tests\\test_preprocess.test_bandpass_preserves_shape"
+        ]
+      },
+      "normalize_window": {
+        "line": 50,
+        "doc": "Z-score normalize a single window or batch of windows.",
+        "calls": [],
+        "called_by": [
+          "src\\data\\build_dataset.build_dataset",
+          "src\\model\\predict.predict_signal",
+          "tests\\test_preprocess.test_normalize_window_zero_mean_unit_std",
+          "tests\\test_preprocess.test_normalize_batch",
+          "tests\\test_preprocess.test_normalize_constant_signal_does_not_crash",
+          "tests\\test_preprocess.test_normalize_dtype_is_float32"
+        ]
+      }
+    }
+  },
+  "src\\data\\segment": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "segment_beats": {
+        "line": 12,
+        "doc": "Extract fixed-length windows centered on each annotated beat.",
+        "calls": [],
+        "called_by": [
+          "src\\data\\build_dataset.build_dataset",
+          "src\\model\\predict.predict_signal",
+          "tests\\test_segment.test_segment_basic_shape",
+          "tests\\test_segment.test_segment_drops_beats_near_start",
+          "tests\\test_segment.test_segment_drops_beats_near_end",
+          "tests\\test_segment.test_segment_window_alignment",
+          "tests\\test_segment.test_segment_empty_input"
+        ]
+      }
+    }
+  },
+  "src\\model\\architecture": {
+    "imports": [],
+    "classes": {
+      "ConvBlock": {
+        "line": 58,
+        "doc": "Conv1d -> BatchNorm -> ReLU -> MaxPool.",
+        "methods": [
+          "ConvBlock.__init__",
+          "ConvBlock.forward"
+        ]
+      },
+      "ECGNet": {
+        "line": 74,
+        "doc": "Small 1D CNN: 3 conv blocks, global average pool, linear head.",
+        "methods": [
+          "ECGNet.__init__",
+          "ECGNet.forward"
+        ]
+      }
+    },
+    "functions": {
+      "ConvBlock.__init__": {
+        "line": 61,
+        "doc": null,
+        "calls": [
+          "?:__init__"
+        ],
+        "called_by": []
+      },
+      "ConvBlock.forward": {
+        "line": 70,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "ECGNet.__init__": {
+        "line": 81,
+        "doc": null,
+        "calls": [
+          "?:__init__"
+        ],
+        "called_by": []
+      },
+      "ECGNet.forward": {
+        "line": 90,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      }
+    }
+  },
+  "src\\model\\dataset": {
+    "imports": [],
+    "classes": {
+      "EcgBeatDataset": {
+        "line": 15,
+        "doc": "Loads preprocessed beat windows from .npy files.",
+        "methods": [
+          "EcgBeatDataset.__init__",
+          "EcgBeatDataset.__len__",
+          "EcgBeatDataset.__getitem__"
+        ]
+      }
+    },
+    "functions": {
+      "EcgBeatDataset.__init__": {
+        "line": 18,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "EcgBeatDataset.__len__": {
+        "line": 25,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "EcgBeatDataset.__getitem__": {
+        "line": 28,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      }
+    }
+  },
+  "src\\model\\predict": {
+    "imports": [],
+    "classes": {
+      "BeatPrediction": {
+        "line": 30,
+        "doc": null,
+        "methods": []
+      }
+    },
+    "functions": {
+      "detect_r_peaks": {
+        "line": 36,
+        "doc": "Detect R-peaks on a bandpass-filtered single-channel ECG.",
+        "calls": [],
+        "called_by": [
+          "src\\model\\predict.predict_signal"
+        ]
+      },
+      "load_model": {
+        "line": 48,
+        "doc": "Load a trained ECGNet checkpoint.",
+        "calls": [],
+        "called_by": [
+          "scripts\\predict_demo.main",
+          "src\\api\\main.lifespan"
+        ]
+      },
+      "predict_signal": {
+        "line": 58,
+        "doc": "Run the full inference pipeline on a raw single-channel ECG.",
+        "calls": [
+          "src\\data\\preprocess.bandpass_filter",
+          "src\\model\\predict.detect_r_peaks",
+          "src\\data\\segment.segment_beats",
+          "src\\data\\preprocess.normalize_window"
+        ],
+        "called_by": [
+          "scripts\\predict_demo.main",
+          "src\\api\\main.predict"
+        ]
+      }
+    }
+  },
+  "src\\model\\train": {
+    "imports": [],
+    "classes": {
+      "TrainConfig": {
+        "line": 22,
+        "doc": null,
+        "methods": []
+      }
+    },
+    "functions": {
+      "_compute_class_weights": {
+        "line": 31,
+        "doc": "Inverse-frequency class weights for the cross-entropy loss.",
+        "calls": [],
+        "called_by": []
+      },
+      "_split_train_val": {
+        "line": 42,
+        "doc": null,
+        "calls": [],
+        "called_by": [
+          "src\\model\\train.train"
+        ]
+      },
+      "_run_epoch": {
+        "line": 59,
+        "doc": null,
+        "calls": [
+          "src\\model\\train.train"
+        ],
+        "called_by": [
+          "src\\model\\train.train",
+          "src\\model\\train.train"
+        ]
+      },
+      "train": {
+        "line": 87,
+        "doc": null,
+        "calls": [
+          "src\\model\\train._split_train_val",
+          "src\\model\\train._run_epoch",
+          "src\\model\\train._run_epoch"
+        ],
+        "called_by": [
+          "scripts\\train.main",
+          "src\\model\\train._run_epoch"
+        ]
+      }
+    }
+  },
+  "src\\utils\\gcs": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "is_gcs_uri": {
+        "line": 16,
+        "doc": null,
+        "calls": [],
+        "called_by": [
+          "src\\api\\main.lifespan"
+        ]
+      },
+      "download_gcs_blob": {
+        "line": 20,
+        "doc": "Download a GCS object to a local temp file and return the path.",
+        "calls": [],
+        "called_by": [
+          "src\\api\\main.lifespan"
+        ]
+      }
+    }
+  },
+  "streamlit_demo": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "list_samples": {
+        "line": 25,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "call_predict": {
+        "line": 31,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "plot_signal_with_beats": {
+        "line": 41,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "main": {
+        "line": 67,
+        "doc": null,
+        "calls": [
+          "?:list_samples",
+          "?:call_predict",
+          "?:plot_signal_with_beats"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "tests\\test_api": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "client": {
+        "line": 20,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "test_health": {
+        "line": 28,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "test_predict_rejects_short_signal": {
+        "line": 36,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "test_predict_rejects_bad_fs": {
+        "line": 41,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "test_predict_returns_valid_predictions": {
+        "line": 48,
+        "doc": "End-to-end: synthetic signal with periodic spikes -> non-empty predictions.",
+        "calls": [],
+        "called_by": []
+      },
+      "test_predict_response_schema": {
+        "line": 70,
+        "doc": "Response keys match the documented schema.",
+        "calls": [],
+        "called_by": []
+      }
+    }
+  },
+  "tests\\test_architecture": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "test_forward_pass_shape": {
+        "line": 9,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      },
+      "test_parameter_count_is_small": {
+        "line": 16,
+        "doc": "Sanity check: model should be small (<100k params).",
+        "calls": [],
+        "called_by": []
+      },
+      "test_backward_pass_works": {
+        "line": 23,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      }
+    }
+  },
+  "tests\\test_preprocess": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "test_bandpass_removes_dc_offset": {
+        "line": 9,
+        "doc": null,
+        "calls": [
+          "src\\data\\preprocess.bandpass_filter"
+        ],
+        "called_by": []
+      },
+      "test_bandpass_attenuates_high_freq": {
+        "line": 19,
+        "doc": null,
+        "calls": [
+          "src\\data\\preprocess.bandpass_filter"
+        ],
+        "called_by": []
+      },
+      "test_bandpass_preserves_shape": {
+        "line": 32,
+        "doc": null,
+        "calls": [
+          "src\\data\\preprocess.bandpass_filter"
+        ],
+        "called_by": []
+      },
+      "test_normalize_window_zero_mean_unit_std": {
+        "line": 40,
+        "doc": null,
+        "calls": [
+          "src\\data\\preprocess.normalize_window"
+        ],
+        "called_by": []
+      },
+      "test_normalize_batch": {
+        "line": 48,
+        "doc": null,
+        "calls": [
+          "src\\data\\preprocess.normalize_window"
+        ],
+        "called_by": []
+      },
+      "test_normalize_constant_signal_does_not_crash": {
+        "line": 57,
+        "doc": "Edge case: zero-variance window should produce zeros, not NaN.",
+        "calls": [
+          "src\\data\\preprocess.normalize_window"
+        ],
+        "called_by": []
+      },
+      "test_normalize_dtype_is_float32": {
+        "line": 65,
+        "doc": null,
+        "calls": [
+          "src\\data\\preprocess.normalize_window"
+        ],
+        "called_by": []
+      }
+    }
+  },
+  "tests\\test_segment": {
+    "imports": [],
+    "classes": {},
+    "functions": {
+      "_make_signal": {
+        "line": 14,
+        "doc": "Synthetic 2-channel signal with known values for assertion.",
+        "calls": [],
+        "called_by": [
+          "tests\\test_segment.test_segment_basic_shape",
+          "tests\\test_segment.test_segment_drops_beats_near_start",
+          "tests\\test_segment.test_segment_drops_beats_near_end",
+          "tests\\test_segment.test_segment_window_alignment",
+          "tests\\test_segment.test_segment_empty_input"
+        ]
+      },
+      "test_segment_basic_shape": {
+        "line": 20,
+        "doc": null,
+        "calls": [
+          "tests\\test_segment._make_signal",
+          "src\\data\\segment.segment_beats"
+        ],
+        "called_by": []
+      },
+      "test_segment_drops_beats_near_start": {
+        "line": 28,
+        "doc": null,
+        "calls": [
+          "tests\\test_segment._make_signal",
+          "src\\data\\segment.segment_beats"
+        ],
+        "called_by": []
+      },
+      "test_segment_drops_beats_near_end": {
+        "line": 37,
+        "doc": null,
+        "calls": [
+          "tests\\test_segment._make_signal",
+          "src\\data\\segment.segment_beats"
+        ],
+        "called_by": []
+      },
+      "test_segment_window_alignment": {
+        "line": 47,
+        "doc": "Window should contain channel-0 samples [peak-250, peak+400).",
+        "calls": [
+          "tests\\test_segment._make_signal",
+          "src\\data\\segment.segment_beats"
+        ],
+        "called_by": []
+      },
+      "test_segment_empty_input": {
+        "line": 59,
+        "doc": null,
+        "calls": [
+          "tests\\test_segment._make_signal",
+          "src\\data\\segment.segment_beats"
+        ],
+        "called_by": []
+      },
+      "test_window_length_constant": {
+        "line": 66,
+        "doc": null,
+        "calls": [],
+        "called_by": []
+      }
+    }
+  }
+}
