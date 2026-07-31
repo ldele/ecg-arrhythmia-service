@@ -7,8 +7,8 @@ from pathlib import Path
 from src.data.labels import AAMI_CLASSES, map_to_aami
 from src.data.load import load_record
 
-# Standard MIT-BIH record IDs (48 records, excluding paced-only 102/104/107/217
-# is common in literature) — but for inspection we look at all of them).
+# All 48 MIT-BIH record IDs. Training excludes the paced-only records
+# (102, 104, 107, 217); for label inspection we count every record.
 MITBIH_RECORDS = [
     "100", "101", "102", "103", "104", "105", "106", "107", "108", "109",
     "111", "112", "113", "114", "115", "116", "117", "118", "119", "121",

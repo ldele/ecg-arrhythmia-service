@@ -75,7 +75,7 @@ def build_dataset(record_ids: list[str], data_dir: Path) -> Dataset:
         kept_labels = np.array(
             [
                 CLASS_TO_IDX[lbl]
-                for lbl, keep in zip(aami_labels, keep_mask)
+                for lbl, keep in zip(aami_labels, keep_mask, strict=True)
                 if keep and lbl is not None
             ],
             dtype=np.int64,

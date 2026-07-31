@@ -66,19 +66,19 @@ def plot_signal_with_beats(signal: np.ndarray, fs: int, predictions: list[dict])
 
 def main() -> None:
     st.set_page_config(page_title="ECG Arrhythmia Demo", layout="wide")
-    st.title("ECG Arrhythmia Classification — Live Demo")
+    st.title("ECG Arrhythmia Classification: Live Demo")
     st.caption(
         "Demo client for the inference API. Pick a MIT-BIH sample, send it to the "
         "live Cloud Run service, and see per-beat classifications overlaid on the signal."
     )
 
-    with st.expander("📖 About ECG signals and MIT-BIH"):
+    with st.expander("About ECG signals and MIT-BIH"):
         background_path = Path(__file__).parent / "ECG_BACKGROUND.md"
         if background_path.exists():
             st.markdown(background_path.read_text(encoding="utf-8"))
         else:
             st.info("Background documentation not available in this deployment.")
-    
+
     api_url = os.environ.get("API_URL", DEFAULT_API_URL)
 
     with st.sidebar:
@@ -88,8 +88,8 @@ def main() -> None:
         st.markdown("**Class legend**")
         for cls, label in CLASS_LABELS.items():
             st.markdown(
-                f"<span style='color:{CLASS_COLORS[cls]};font-weight:bold'>{cls}</span> "
-                f"— {label}",
+                f"<span style='color:{CLASS_COLORS[cls]};font-weight:bold'>{cls}</span>"
+                f": {label}",
                 unsafe_allow_html=True,
             )
 
@@ -100,10 +100,10 @@ def main() -> None:
 
     sample_name = st.selectbox("Choose a sample", list(samples.keys()))
     signal = np.load(samples[sample_name])
-    st.caption(f"Signal: {len(signal)} samples · {len(signal) / FS:.1f} seconds · {FS} Hz")
+    st.caption(f"Signal: {len(signal)} samples, {len(signal) / FS:.1f} seconds, {FS} Hz")
 
     if st.button("Classify beats", type="primary"):
-        with st.spinner("Calling inference API (first request may take 10–20 s if cold)..."):
+        with st.spinner("Calling inference API (first request may take 10-20 s if cold)..."):
             try:
                 result = call_predict(api_url, signal, FS)
             except requests.RequestException as exc:

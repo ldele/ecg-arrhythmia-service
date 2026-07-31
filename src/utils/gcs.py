@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import mkstemp
 
 from google.cloud import storage
 
@@ -28,11 +29,12 @@ def download_gcs_blob(uri: str) -> Path:
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
 
-    tmp = NamedTemporaryFile(delete=False, suffix=Path(blob_name).suffix)
-    tmp.close()
+    # Named file the GCS client can write to; the caller owns it afterwards.
+    fd, local_path = mkstemp(suffix=Path(blob_name).suffix)
+    os.close(fd)
     logger.info(
         "Downloading model from GCS",
-        extra={"bucket": bucket_name, "blob": blob_name, "local_path": tmp.name},
+        extra={"bucket": bucket_name, "blob": blob_name, "local_path": local_path},
     )
-    blob.download_to_filename(tmp.name)
-    return Path(tmp.name)
+    blob.download_to_filename(local_path)
+    return Path(local_path)

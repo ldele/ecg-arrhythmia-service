@@ -4,15 +4,14 @@ from __future__ import annotations
 import logging
 import os
 import time
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncIterator
 
 import numpy as np
 import torch
 from fastapi import FastAPI, HTTPException
 
-from src.utils.gcs import download_gcs_blob, is_gcs_uri
 from src.api.logging_config import configure_logging
 from src.api.schemas import (
     BeatPredictionOut,
@@ -21,6 +20,7 @@ from src.api.schemas import (
     PredictResponse,
 )
 from src.model.predict import load_model, predict_signal
+from src.utils.gcs import download_gcs_blob, is_gcs_uri
 
 logger = logging.getLogger("ecg.api")
 
@@ -35,10 +35,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     model_uri = os.environ.get("MODEL_PATH", "models/model.pt")
     logger.info("Loading model", extra={"model_uri": model_uri})
 
-    if is_gcs_uri(model_uri):
-        local_path = download_gcs_blob(model_uri)
-    else:
-        local_path = Path(model_uri)
+    local_path = download_gcs_blob(model_uri) if is_gcs_uri(model_uri) else Path(model_uri)
 
     device = torch.device("cpu")
     model = load_model(local_path, device=device)

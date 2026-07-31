@@ -109,5 +109,5 @@ def predict_signal(
             predicted_class=CLASS_NAMES[int(pred)],
             confidence=float(conf),
         )
-        for peak, pred, conf in zip(valid_peaks, preds.cpu(), confs.cpu())
+        for peak, pred, conf in zip(valid_peaks, preds.cpu(), confs.cpu(), strict=True)
     ]

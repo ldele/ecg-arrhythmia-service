@@ -1,4 +1,4 @@
-# ECG signals and the MIT-BIH dataset — a short primer
+# ECG signals and the MIT-BIH dataset
 
 This is the domain context for the ECG Arrhythmia inference service.
 
@@ -11,27 +11,24 @@ electrodes; the recorded signal is the voltage difference between them.
 Each heartbeat shows up as a stereotyped wave with three components:
 
 ```
-       R
-       /\
-      /  \
-     /    \
-P   /      \    T
-/\ /        \  /\
-__/  \/          \/  \__   ← baseline
-        \  /
-         \/
-         Q  S
+             R
+             /\
+            /  \
+    P      /    \          T
+   /-\    /      \       /---\
+__/   \__/        \_____/     \___
+         Q        S
 ```
 
-- **P wave** — atrial depolarization (the top chambers contracting). Small bump
+- **P wave:** atrial depolarization (the top chambers contracting). Small bump
   before the main spike.
-- **QRS complex** — ventricular depolarization (the bottom chambers, which do
+- **QRS complex:** ventricular depolarization (the bottom chambers, which do
   most of the pumping). The big spike. The peak inside QRS is the **R-peak**,
   used as the alignment point for almost all ECG analysis.
-- **T wave** — ventricular repolarization (the ventricles recovering). Broader
+- **T wave:** ventricular repolarization (the ventricles recovering). Broader
   bump after the spike.
 
-A normal heartbeat lasts roughly 0.6–1.0 seconds. The morphology of these
+A normal heartbeat lasts roughly 0.6-1.0 seconds. The morphology of these
 waves and their timing relative to each other is what a clinician (or a model)
 reads to classify a beat.
 
@@ -46,8 +43,8 @@ Key facts:
 - **48 records**, each ~30 minutes long, from 47 patients.
 - **2-channel** recordings (usually MLII + V1 or V5, depending on the patient).
   MLII is the channel used by this project.
-- **Sampling rate: 360 Hz** — every record at the same rate, which is why the
-  inference code assumes 360 Hz and the model was trained at that rate.
+- **Sampling rate: 360 Hz** for every record, which is why the inference code
+  assumes 360 Hz and the model was trained at that rate.
 - **Beat annotations:** every QRS complex is hand-annotated by cardiologists
   with a single-character symbol (`N`, `V`, `A`, `L`, etc.) marking what kind
   of beat it is. The annotations are the ground truth.
@@ -62,20 +59,22 @@ few pre-rendered demo slices are baked into the Streamlit image.
 
 MIT-BIH uses about 20 distinct beat symbols. The **ANSI/AAMI EC57:2012**
 standard collapses these into 5 superclasses for the purposes of benchmarking
-arrhythmia detectors. This project uses 4 of them (Q is dropped — see below).
+arrhythmia detectors. This project uses 4 of them (Q is dropped, see below).
 
 | Class | Name                          | Description                                           | Examples of MIT-BIH symbols |
 |-------|-------------------------------|-------------------------------------------------------|----------------------------|
 | **N** | Normal                        | Regular sinus rhythm. The heart's pacemaker (SA node) is in charge and the beat looks textbook. Includes some bundle-branch blocks that look abnormal but originate normally. | `N`, `L`, `R`, `e`, `j` |
 | **S** | Supraventricular ectopic      | A beat originating *above* the ventricles but not from the normal pacemaker. Often premature. Morphology can look very close to N. | `A`, `a`, `J`, `S` |
-| **V** | Ventricular ectopic           | A beat originating in the ventricles themselves. Morphologically very different — wide, distorted QRS, no preceding P-wave. Visually distinctive. | `V`, `E` |
+| **V** | Ventricular ectopic           | A beat originating in the ventricles themselves. Morphologically very different: wide, distorted QRS, no preceding P-wave. Visually distinctive. | `V`, `E` |
 | **F** | Fusion                        | A normal beat and a ventricular beat fire simultaneously, producing a hybrid waveform. Rare and morphologically ambiguous. | `F` |
 | **Q** | Unknown / paced               | Either an unclassifiable beat or one driven by a pacemaker. Most Q examples in MIT-BIH come from a few patients with implanted pacemakers. | `/`, `f`, `Q` |
 
 ### Why this project drops Q
 
-This project follows the convention of excluding the four paced-only
-records (102, 104, 107, 217) from training and evaluation (see other project using the same database). Once those are gone, there are fewer than 20 Q beats in the entire dataset — not enough to train or evaluate. So Q is dropped and we do 4-class classification.
+This project follows the usual convention of excluding the four paced-only
+records (102, 104, 107, 217) from training and evaluation. Once those are
+gone there are fewer than 20 Q beats left in the entire dataset, not enough
+to train or evaluate on. So Q is dropped and this is 4-class classification.
 
 ### Class imbalance, in numbers
 
@@ -84,8 +83,8 @@ paced records, the training distribution is roughly:
 
 - **N: ~90%** (the easy class)
 - **V: ~7%** (the moderate class, morphologically distinctive)
-- **S: ~2%** (hard — looks like N)
-- **F: ~1%** (very hard — rare and ambiguous)
+- **S: ~2%** (hard, looks like N)
+- **F: ~1%** (very hard, rare and ambiguous)
 
 A model that always predicts N gets 90% accuracy. This is why per-class F1
 is the only metric worth looking at, and why we report it instead of accuracy
@@ -111,7 +110,7 @@ This project uses inter-patient. The DS1/DS2 record lists are hardcoded in
 
 The inference path is:
 
-1. **Bandpass filter** the raw signal at 0.5–40 Hz. This removes:
+1. **Bandpass filter** the raw signal at 0.5-40 Hz. This removes:
    - Baseline wander (slow drift below 0.5 Hz, mostly from breathing and
      electrode movement).
    - High-frequency noise (above 40 Hz, mostly muscle artifact and 50/60 Hz
@@ -126,7 +125,7 @@ The inference path is:
 4. **Per-window z-score normalization.** Each window is standardized
    independently. This makes the model invariant to absolute amplitude, which
    varies a lot between patients and electrodes.
-5. **1D CNN forward pass.** Output: 4 logits → softmax → class + confidence.
+5. **1D CNN forward pass.** Output: 4 logits -> softmax -> class + confidence.
 
 ## Why a 1D CNN works here
 
@@ -144,7 +143,7 @@ amplitude, width, and noise. Three properties of 1D convolutions match this:
   parameters here). With only a few hundred examples of S and F, a larger
   model would memorize N and overfit the minority classes.
 
-You can think of a 1D CNN as a learned FIR-filter-bank with non-linearities —
+You can think of a 1D CNN as a learned FIR-filter-bank with non-linearities:
 the same intuition from classical signal processing, except the filter
 coefficients are learned from labels rather than hand-designed.
 
@@ -152,7 +151,7 @@ coefficients are learned from labels rather than hand-designed.
 
 - It does not detect rhythms (e.g. atrial fibrillation, ventricular
   tachycardia). It classifies individual beats only.
-- It does not output uncertainty estimates beyond the softmax confidence —
+- It does not output uncertainty estimates beyond the softmax confidence,
   which is not a calibrated probability.
 - It does not generalize to non-MIT-BIH recordings without significant
   domain-adaptation work. Different leads, different sampling rates,
@@ -162,10 +161,10 @@ coefficients are learned from labels rather than hand-designed.
 ## References
 
 - Moody, G. B., & Mark, R. G. (2001). The impact of the MIT-BIH Arrhythmia
-  Database. *IEEE Engineering in Medicine and Biology Magazine*, 20(3), 45–50.
+  Database. *IEEE Engineering in Medicine and Biology Magazine*, 20(3), 45-50.
 - de Chazal, P., O'Dwyer, M., & Reilly, R. B. (2004). Automatic classification
   of heartbeats using ECG morphology and heartbeat interval features.
-  *IEEE Transactions on Biomedical Engineering*, 51(7), 1196–1206.
+  *IEEE Transactions on Biomedical Engineering*, 51(7), 1196-1206.
 - AAMI (2012). *Testing and reporting performance results of cardiac rhythm
   and ST segment measurement algorithms* (ANSI/AAMI EC57:2012).
 - Kiranyaz, S., Avci, O., Abdeljaber, O., Ince, T., Gabbouj, M., & Inman, D. J.

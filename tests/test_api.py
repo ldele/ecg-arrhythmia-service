@@ -1,24 +1,23 @@
-"""Integration tests for the inference API."""
+"""Integration tests for the inference API.
+
+Runs against the trained checkpoint when one exists and against untrained
+weights otherwise; see `model_path` in conftest.py. Nothing here asserts on
+prediction quality, only on the contract: status codes, response shape, and
+value ranges.
+"""
 from __future__ import annotations
 
-import os
+from collections.abc import Iterator
 from pathlib import Path
 
 import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
-# Skip the whole module if the model artifact isn't present (e.g. fresh clone
-# before training). CI will provide it via a small fixture or by training.
-MODEL_PATH = Path(os.environ.get("MODEL_PATH", "models/model.pt"))
-pytestmark = pytest.mark.skipif(
-    not MODEL_PATH.exists(), reason="model artifact not available"
-)
-
 
 @pytest.fixture(scope="module")
-def client() -> TestClient:
-    # Import inside the fixture so the skip above takes effect before import.
+def client(model_path: Path) -> Iterator[TestClient]:
+    # Imported here so model_path has set MODEL_PATH before the app reads it.
     from src.api.main import app
 
     with TestClient(app) as c:

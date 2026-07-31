@@ -1,13 +1,13 @@
-# ECG Arrhythmia Classification — Inference Service on GCP
+# ECG Arrhythmia Classification: Inference Service on GCP
 
 A containerized ML inference service that classifies heartbeats from raw ECG
 signals. A small 1D CNN trained on the MIT-BIH Arrhythmia Database runs
 behind a FastAPI service, deployed to Google Cloud Run with the model
 artifact served from GCS. CI runs on every PR.
 
-The project is engineered as a deployment exercise, not a modelling
-contribution: the model is deliberately small and conventional. The point
-is the system around it.
+This is a deployment exercise rather than a modelling contribution. The
+model is deliberately small and conventional; the system around it is what
+the project is for.
 
 ## Live demo
 
@@ -19,7 +19,7 @@ is the system around it.
 - Health: <https://ecg-api-lvij6dnkaa-ew.a.run.app/health>
 
 > Both services scale to zero when idle. The first interaction may take
-> 20–30 seconds while both containers cold-start; subsequent requests
+> 20-30 seconds while both containers cold-start; subsequent requests
 > respond in tens of milliseconds.
 
 Example API request:
@@ -43,12 +43,12 @@ versioned under `models/v1.0.0/model.pt`.
 ## Pipeline
 
 Raw ECG signal (single-channel, any length ≥ ~1.8s @ 360Hz)
-→ Butterworth bandpass 0.5–40Hz (removes baseline wander, HF noise)
-→ R-peak detection (scipy `find_peaks` on filtered signal)
-→ Fixed-length windows: 250 samples before peak, 400 after
-→ Per-window z-score normalisation
-→ 1D CNN inference
-→ Per-beat AAMI class + confidence
+-> Butterworth bandpass 0.5-40Hz (removes baseline wander, HF noise)
+-> R-peak detection (scipy `find_peaks` on filtered signal)
+-> Fixed-length windows: 250 samples before peak, 400 after
+-> Per-window z-score normalisation
+-> 1D CNN inference
+-> Per-beat AAMI class + confidence
 
 The inference path is the *exact* same preprocessing used at training,
 exercised by the same code (`src/data/preprocess.py`,
@@ -56,12 +56,12 @@ exercised by the same code (`src/data/preprocess.py`,
 
 ## Model
 
-- Architecture: 3 conv blocks (Conv1d → BN → ReLU → MaxPool) →
-  global average pool → dropout → linear. ~30k parameters.
+- Architecture: 3 conv blocks (Conv1d -> BN -> ReLU -> MaxPool) ->
+  global average pool -> dropout -> linear. ~30k parameters.
 - Training: MIT-BIH Arrhythmia Database, DS1/DS2 inter-patient split
   (de Chazal et al. 2004). Paced records (102, 104, 107, 217) excluded.
 - Loss: cross-entropy. PyTorch.
-- Output: 4 AAMI classes — N (normal), S (supraventricular ectopic),
+- Output: 4 AAMI classes: N (normal), S (supraventricular ectopic),
   V (ventricular ectopic), F (fusion). Class Q dropped (<20 examples
   after excluding paced records).
 
@@ -80,7 +80,7 @@ split. S and F are well known to be very hard at this scale: they are
 both rare and morphologically similar to N. Published methods reach
 F1 ≈ 0.6 on S with substantially more engineering (residual blocks,
 attention, oversampling, hand-engineered RR features). Improving these
-numbers is out of scope here — see *Limitations & next steps*.
+numbers is out of scope here; see *Limitations & next steps*.
 
 ## Local development
 
@@ -119,7 +119,7 @@ below).
 
 ## Limitations & next steps
 
-This is a portfolio project, not a clinical tool. Honestly:
+This is a portfolio project, not a clinical tool. Known gaps:
 
 - **R-peak detection at inference is naive** (amplitude-and-distance
   peak finder). A production system would use Pan-Tompkins or a learned
@@ -139,10 +139,10 @@ This is a portfolio project, not a clinical tool. Honestly:
 - **No GPU.** Inference is fast enough on CPU at portfolio traffic.
   Production with heavy load would want GPU instances or batching.
 - **Automated deployment not yet wired.** CI runs tests; deploy is
-  manual. Workload Identity Federation for GitHub Actions → Cloud Run
+  manual. Workload Identity Federation for GitHub Actions -> Cloud Run
   is the next planned step.
 
-## Monitoring (sketch — not implemented)
+## Monitoring (sketch, not implemented)
 
 If this were running in production, observability would cover:
 
@@ -154,26 +154,27 @@ If this were running in production, observability would cover:
 - **Prediction drift**: log the class distribution of recent
   predictions. Alert if it deviates strongly from the training prior
   (e.g. sudden spike in V predictions could indicate a sensor change
-  or a real event — either way you want to know).
+  or a real event; either way you want to know).
 - **Confidence distribution**: a falling average confidence is an
   early warning that input data is becoming out-of-distribution.
 
 These would be implemented via a `/metrics` Prometheus endpoint plus
-Cloud Monitoring dashboards. Deliberately not built; the right time to
-build monitoring is when you have real traffic to monitor.
+Cloud Monitoring dashboards. Not built, since there is no production
+traffic to monitor yet.
 
 ## Repository layout
 
 ```
 src/
-data/         loading, preprocessing, segmentation, label mapping
-model/        architecture, dataset, training, prediction
-api/          FastAPI app, schemas, structured logging
-utils/        GCS helpers
-tests/          21 tests covering preprocessing, segmentation, model, API
-scripts/        data download, dataset build, training, smoke tests
-.github/        CI workflow
-Dockerfile      multi-stage, CPU-only PyTorch
+  data/       loading, preprocessing, segmentation, label mapping
+  model/      architecture, dataset, training, prediction
+  api/        FastAPI app, schemas, structured logging
+  utils/      GCS helpers
+app/          Streamlit demo client + its Dockerfile and demo samples
+tests/        21 tests covering preprocessing, segmentation, model, API
+scripts/      data download, dataset build, training, smoke tests
+.github/      CI workflow
+Dockerfile    multi-stage, CPU-only PyTorch (API image)
 docker-compose.yml
 pyproject.toml  ruff + mypy strict + pytest config
 ```
@@ -182,11 +183,11 @@ pyproject.toml  ruff + mypy strict + pytest config
 
 - Moody, G. B., & Mark, R. G. (2001). The impact of the MIT-BIH
   Arrhythmia Database. *IEEE Engineering in Medicine and Biology
-  Magazine*, 20(3), 45–50.
+  Magazine*, 20(3), 45-50.
 - de Chazal, P., O'Dwyer, M., & Reilly, R. B. (2004). Automatic
   classification of heartbeats using ECG morphology and heartbeat
   interval features. *IEEE Transactions on Biomedical Engineering*,
-  51(7), 1196–1206. (DS1/DS2 split.)
+  51(7), 1196-1206. (DS1/DS2 split.)
 - AAMI (2012). *Testing and reporting performance results of cardiac
   rhythm and ST segment measurement algorithms* (ANSI/AAMI EC57:2012).
 - Kiranyaz, S., Avci, O., Abdeljaber, O., Ince, T., Gabbouj, M., &

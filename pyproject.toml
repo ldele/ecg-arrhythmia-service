@@ -11,20 +11,46 @@ dependencies = [
     "fastapi>=0.110",
     "uvicorn[standard]>=0.27",
     "pydantic>=2.6",
+    "scikit-learn>=1.4",
+    "google-cloud-storage>=2.14",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
-    "ruff>=0.4",
-    "mypy>=1.10",
+    "ruff==0.16.1",
+    "mypy==2.3.0",
     "httpx>=0.28.1",
+    "requests>=2.31",
 ]
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
 
+# Selected explicitly rather than inherited from ruff's defaults, so a ruff
+# upgrade can't turn CI red by widening the default rule set. Bump the pin and
+# this list together.
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # import sorting
+    "UP",   # pyupgrade: syntax modern enough for target-version
+    "B",    # bugbear: likely bugs
+    "C4",   # comprehension clarity
+    "SIM",  # simplifications
+    "PTH",  # prefer pathlib over os.path
+    "RUF",  # ruff-specific rules
+]
+# Not selected, deliberately:
+#   N:   pep8-naming rejects `X` for a design matrix, which is the ML convention.
+#   ARG: fires on every pytest fixture taken as a parameter but not referenced.
+
+# Pinned in dev deps for the same reason as ruff: `strict = true` is defined by
+# whichever mypy is installed, so an unpinned upgrade can add checks. Bump the
+# pin deliberately, not by accident.
 [tool.mypy]
 python_version = "3.12"
 strict = true
