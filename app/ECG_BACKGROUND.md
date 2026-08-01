@@ -125,7 +125,8 @@ The inference path is:
 4. **Per-window z-score normalization.** Each window is standardized
    independently. This makes the model invariant to absolute amplitude, which
    varies a lot between patients and electrodes.
-5. **1D CNN forward pass.** Output: 4 logits -> softmax -> class + confidence.
+5. **1D CNN forward pass.** Output: 4 logits, which a softmax turns into a
+   class and a confidence.
 
 ## Why a 1D CNN works here
 
