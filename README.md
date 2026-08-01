@@ -106,11 +106,45 @@ python -m scripts.train            # writes models/model.pt and metrics.json
 
 ## Deployment
 
-Container image is built from a multi-stage Dockerfile (final image
+The API image is built from a multi-stage Dockerfile (final image
 ~370 MB, CPU-only PyTorch) and pushed to Artifact Registry in
 `europe-west1`. Cloud Run pulls from there. The model artifact is
 served from GCS; the container loads it at startup. `MODEL_PATH` is
 a `gs://` URI in production and a local path in dev.
+
+Registry is `ecg-images` in project `ecg-arrhythmia-service`,
+region `europe-west1`, giving these image paths:
+
+```
+europe-west1-docker.pkg.dev/ecg-arrhythmia-service/ecg-images/ecg-api
+europe-west1-docker.pkg.dev/ecg-arrhythmia-service/ecg-images/ecg-demo
+```
+
+Images carry semantic version tags, never `:latest`. Cloud Run pins
+each revision to the resolved digest, so distinct tags are what make
+a rollback possible.
+
+Redeploying the demo, run from the repo root (the `.` build context
+is required because the Dockerfile copies from `app/`):
+
+```bash
+docker build -f app/Dockerfile -t europe-west1-docker.pkg.dev/ecg-arrhythmia-service/ecg-images/ecg-demo:vX.Y.Z .
+docker push europe-west1-docker.pkg.dev/ecg-arrhythmia-service/ecg-images/ecg-demo:vX.Y.Z
+gcloud run deploy ecg-demo --image europe-west1-docker.pkg.dev/ecg-arrhythmia-service/ecg-images/ecg-demo:vX.Y.Z --region europe-west1
+```
+
+Check what is actually serving afterwards. `gcloud run deploy` reports
+success even when the new revision received no traffic, which happens
+whenever the service has been pinned to a revision by a previous
+rollback:
+
+```bash
+gcloud run services describe ecg-demo --region europe-west1 --format="value(status.traffic)"
+```
+
+Expect `latestRevision: True` and the new revision at 100 percent. If
+the service is pinned, release it with
+`gcloud run services update-traffic ecg-demo --to-latest --region europe-west1`.
 
 Deploy is currently a manual `gcloud run deploy` command. GitHub
 Actions CI runs on every PR (ruff + mypy + pytest). Automated deploy
